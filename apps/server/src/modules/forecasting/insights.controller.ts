@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { doubleExponentialSmoothing, movingAverageForecast } from './forecasting.utils';
+import { forecastingController } from './forecasting.controller';
 
 const prisma = new PrismaClient();
 
@@ -125,90 +126,7 @@ export class InsightsController {
 
   // Get demand forecast
   static async getForecast(req: Request, res: Response) {
-    try {
-      const { site_id, type, horizon } = req.query;
-      const forecastHorizon = horizon ? parseInt(horizon as string) : 14;
-      
-      // Fetch historical rental data for the site and equipment type
-      const rentals = await prisma.rental.findMany({
-        where: {
-          site_id: site_id ? parseInt(site_id as string) : undefined,
-          equipment: {
-            type: type as string
-          },
-          status: 'returned',
-          check_out_date: {
-            gte: new Date(new Date().setMonth(new Date().getMonth() - 6)) // Last 6 months
-          }
-        },
-        include: {
-          equipment: true
-        },
-        orderBy: {
-          check_out_date: 'asc'
-        }
-      });
-      
-      // Transform data into daily demand series
-      const demandByDate: { [key: string]: number } = {};
-      
-      rentals.forEach(rental => {
-        const dateStr = rental.check_out_date.toISOString().split('T')[0];
-        demandByDate[dateStr] = (demandByDate[dateStr] || 0) + 1;
-      });
-      
-      // Sort dates and extract values
-      const sortedDates = Object.keys(demandByDate).sort();
-      const demandValues = sortedDates.map(date => demandByDate[date]);
-      
-      // Generate forecast
-      let forecastResult;
-      if (demandValues.length >= 14) {
-        // Use double exponential smoothing for sufficient data
-        forecastResult = doubleExponentialSmoothing(demandValues, 0.3, 0.1, forecastHorizon);
-      } else if (demandValues.length > 0) {
-        // Use moving average for limited data
-        forecastResult = movingAverageForecast(demandValues, 7, forecastHorizon);
-      } else {
-        // No data - return zeros
-        forecastResult = {
-          forecast: Array(forecastHorizon).fill(0),
-          confidenceUpper: Array(forecastHorizon).fill(0),
-          confidenceLower: Array(forecastHorizon).fill(0)
-        };
-      }
-      
-      // Generate date labels for forecast
-      const lastDate = sortedDates.length > 0 
-        ? new Date(sortedDates[sortedDates.length - 1]) 
-        : new Date();
-      
-      const forecastDates: string[] = [];
-      for (let i = 1; i <= forecastHorizon; i++) {
-        const forecastDate = new Date(lastDate);
-        forecastDate.setDate(lastDate.getDate() + i);
-        forecastDates.push(forecastDate.toISOString().split('T')[0]);
-      }
-      
-      return res.status(200).json({
-        siteId: site_id,
-        equipmentType: type,
-        horizon: forecastHorizon,
-        historicalData: {
-          dates: sortedDates,
-          values: demandValues
-        },
-        forecast: {
-          dates: forecastDates,
-          values: forecastResult.forecast,
-          confidenceUpper: forecastResult.confidenceUpper,
-          confidenceLower: forecastResult.confidenceLower
-        }
-      });
-    } catch (error) {
-      console.error('Forecast error:', error);
-      return res.status(500).json({ error: 'Failed to generate forecast' });
-    }
+    return forecastingController.getForecast(req, res);
   }
 
   // Get anomaly reports

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import MaintenanceForm from '@/components/maintenance-form';
 
 export default function Maintenance() {
   const [maintenance, setMaintenance] = useState([
@@ -30,6 +31,9 @@ export default function Maintenance() {
     }
   ]);
 
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingMaintenance, setEditingMaintenance] = useState(null);
+
   const getStatusClass = (status) => {
     switch (status) {
       case 'scheduled': return 'bg-blue-100 text-blue-800';
@@ -39,11 +43,49 @@ export default function Maintenance() {
     }
   };
 
+  const handleCreateMaintenance = async (data) => {
+    // In a real app, this would make an API call
+    console.log('Creating maintenance:', data);
+    // Simulate API call
+    return new Promise((resolve) => setTimeout(resolve, 1000));
+  };
+
+  const handleUpdateMaintenance = async (data) => {
+    // In a real app, this would make an API call
+    console.log('Updating maintenance:', data);
+    // Simulate API call
+    return new Promise((resolve) => setTimeout(resolve, 1000));
+  };
+
+  const openEditForm = (item) => {
+    setEditingMaintenance(item);
+    setIsFormOpen(true);
+  };
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Maintenance</h1>
-        <button className="cat-button">Schedule Maintenance</button>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <h1 className="text-3xl font-bold text-cat-dark">Maintenance</h1>
+        <div className="flex gap-3">
+          <button className="cat-button flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+            </svg>
+            Refresh
+          </button>
+          <button 
+            className="cat-button flex items-center"
+            onClick={() => {
+              setEditingMaintenance(null);
+              setIsFormOpen(true);
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+            Schedule Maintenance
+          </button>
+        </div>
       </div>
 
       {/* Maintenance List */}
@@ -61,7 +103,7 @@ export default function Maintenance() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {maintenance.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{item.equipmentCode}</div>
                     <div className="text-sm text-gray-500">{item.equipmentType}</div>
@@ -70,12 +112,17 @@ export default function Maintenance() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.serviceType}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(item.status)}`}>
-                      {item.status}
+                      {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">View</button>
-                    <button className="text-gray-600 hover:text-gray-900">Edit</button>
+                    <button 
+                      className="text-indigo-600 hover:text-indigo-900 mr-3"
+                      onClick={() => openEditForm(item)}
+                    >
+                      Edit
+                    </button>
+                    <button className="text-gray-600 hover:text-gray-900">View</button>
                   </td>
                 </tr>
               ))}
@@ -83,6 +130,16 @@ export default function Maintenance() {
           </table>
         </div>
       </div>
+
+      <MaintenanceForm
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditingMaintenance(null);
+        }}
+        onSubmit={editingMaintenance ? handleUpdateMaintenance : handleCreateMaintenance}
+        initialData={editingMaintenance}
+      />
     </div>
   );
 }

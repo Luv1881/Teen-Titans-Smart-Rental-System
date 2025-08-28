@@ -121,3 +121,13 @@ model Telemetry {
   is_idle      Boolean?
   equipment    Equipment @relation(fields: [equipment_id], references: [equipment_id])
 }
+
+model ForecastState {
+  id             Int       @id @default(autoincrement())
+  site_id        Int
+  equipment_type String
+  model_state    String
+  updated_at     DateTime  @default(now())
+
+  @@unique([site_id, equipment_type])
+}

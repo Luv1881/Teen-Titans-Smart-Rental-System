@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import RentalForm from '@/components/rental-form';
 
 export default function Rentals() {
   const [rentals, setRentals] = useState([]);
   const [filter, setFilter] = useState('active');
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingRental, setEditingRental] = useState(null);
 
   useEffect(() => {
     // In a real app, this would come from an API
@@ -46,7 +49,9 @@ export default function Rentals() {
     setRentals(mockRentals);
   }, []);
 
-  const filteredRentals = rentals.filter(rental => filter === 'all' || rental.status === filter);
+  const filteredRentals = filter === 'all' 
+    ? rentals 
+    : rentals.filter(rental => filter === 'all' || rental.status === filter);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -57,36 +62,74 @@ export default function Rentals() {
     }
   };
 
+  const handleCreateRental = async (data) => {
+    // In a real app, this would make an API call
+    console.log('Creating rental:', data);
+    // Simulate API call
+    return new Promise((resolve) => setTimeout(resolve, 1000));
+  };
+
+  const handleUpdateRental = async (data) => {
+    // In a real app, this would make an API call
+    console.log('Updating rental:', data);
+    // Simulate API call
+    return new Promise((resolve) => setTimeout(resolve, 1000));
+  };
+
+  const openEditForm = (rental) => {
+    setEditingRental(rental);
+    setIsFormOpen(true);
+  };
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Rentals</h1>
-        <button className="cat-button">New Rental</button>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <h1 className="text-3xl font-bold text-cat-dark">Rentals</h1>
+        <div className="flex gap-3">
+          <button className="cat-button flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+            </svg>
+            Refresh
+          </button>
+          <button 
+            className="cat-button flex items-center"
+            onClick={() => {
+              setEditingRental(null);
+              setIsFormOpen(true);
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+            New Rental
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
       <div className="cat-card mb-8">
-        <div className="flex space-x-4">
+        <div className="flex flex-wrap gap-2">
           <button 
-            className={`px-4 py-2 rounded-lg ${filter === 'all' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200'}`}
+            className={`px-4 py-2 rounded-lg ${filter === 'all' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200 text-cat-dark'}`}
             onClick={() => setFilter('all')}
           >
             All Rentals
           </button>
           <button 
-            className={`px-4 py-2 rounded-lg ${filter === 'active' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200'}`}
+            className={`px-4 py-2 rounded-lg ${filter === 'active' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200 text-cat-dark'}`}
             onClick={() => setFilter('active')}
           >
             Active
           </button>
           <button 
-            className={`px-4 py-2 rounded-lg ${filter === 'overdue' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200'}`}
+            className={`px-4 py-2 rounded-lg ${filter === 'overdue' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200 text-cat-dark'}`}
             onClick={() => setFilter('overdue')}
           >
             Overdue
           </button>
           <button 
-            className={`px-4 py-2 rounded-lg ${filter === 'returned' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200'}`}
+            className={`px-4 py-2 rounded-lg ${filter === 'returned' ? 'bg-cat-yellow text-cat-dark' : 'bg-gray-200 text-cat-dark'}`}
             onClick={() => setFilter('returned')}
           >
             Returned
@@ -111,7 +154,7 @@ export default function Rentals() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRentals.map((rental) => (
-                <tr key={rental.id}>
+                <tr key={rental.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{rental.equipmentCode}</div>
                     <div className="text-sm text-gray-500">{rental.equipmentType}</div>
@@ -125,13 +168,20 @@ export default function Rentals() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(rental.status)}`}>
-                      {rental.status}
+                      {rental.status.charAt(0).toUpperCase() + rental.status.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
+                    <button 
+                      className="text-indigo-600 hover:text-indigo-900 mr-3"
+                      onClick={() => openEditForm(rental)}
+                    >
+                      Edit
+                    </button>
                     {rental.status === 'active' && (
-                      <button className="text-green-600 hover:text-green-900">Check In</button>
+                      <button className="text-green-600 hover:text-green-900">
+                        Check In
+                      </button>
                     )}
                   </td>
                 </tr>
@@ -140,6 +190,16 @@ export default function Rentals() {
           </table>
         </div>
       </div>
+
+      <RentalForm
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditingRental(null);
+        }}
+        onSubmit={editingRental ? handleUpdateRental : handleCreateRental}
+        initialData={editingRental}
+      />
     </div>
   );
 }

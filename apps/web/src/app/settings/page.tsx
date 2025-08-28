@@ -15,12 +15,12 @@ export default function Settings() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Settings</h1>
+      <h1 className="text-3xl font-bold mb-8 text-cat-dark">Settings</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Role Switcher */}
         <div className="cat-card">
-          <h2 className="text-xl font-bold mb-4">User Role</h2>
+          <h2 className="text-xl font-bold mb-4 text-cat-dark">User Role</h2>
           <div className="space-y-4">
             {roles.map((roleOption) => (
               <div key={roleOption.id} className="flex items-center">
@@ -75,7 +75,7 @@ export default function Settings() {
         
         {/* System Settings */}
         <div className="cat-card">
-          <h2 className="text-xl font-bold mb-4">System Settings</h2>
+          <h2 className="text-xl font-bold mb-4 text-cat-dark">System Settings</h2>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>

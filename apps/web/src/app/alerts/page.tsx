@@ -86,7 +86,7 @@ export default function Alerts() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Alerts & Notifications</h1>
+      <h1 className="text-3xl font-bold mb-8 text-cat-dark">Alerts & Notifications</h1>
       
       {/* Alerts List */}
       <div className="space-y-4">
@@ -100,10 +100,10 @@ export default function Alerts() {
             </div>
             <div className="flex-1">
               <div className="flex justify-between">
-                <h3 className="text-lg font-semibold">{alert.equipmentCode}</h3>
+                <h3 className="text-lg font-semibold text-cat-dark">{alert.equipmentCode}</h3>
                 <span className="text-sm text-gray-500">{alert.timestamp}</span>
               </div>
-              <p className="mt-1">{alert.message}</p>
+              <p className="mt-1 text-gray-700">{alert.message}</p>
               <div className="mt-3">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   {alert.type.charAt(0).toUpperCase() + alert.type.slice(1)}

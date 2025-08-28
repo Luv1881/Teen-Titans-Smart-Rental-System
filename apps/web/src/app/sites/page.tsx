@@ -58,13 +58,13 @@ export default function Sites() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Sites</h1>
+        <h1 className="text-3xl font-bold text-cat-dark">Sites</h1>
         <button className="cat-button">Add Site</button>
       </div>
 
       {/* Map View */}
       <div className="cat-card mb-8">
-        <h2 className="text-xl font-bold mb-4">Site Locations</h2>
+        <h2 className="text-xl font-bold mb-4 text-cat-dark">Site Locations</h2>
         <div className="h-96 rounded-lg overflow-hidden">
           <MapContainer center={mapCenter} zoom={5} style={{ height: '100%', width: '100%' }}>
             <TileLayer
@@ -75,8 +75,8 @@ export default function Sites() {
               <Marker key={site.id} position={[site.latitude, site.longitude]}>
                 <Popup>
                   <div>
-                    <h3 className="font-bold">{site.name}</h3>
-                    <p className="text-sm">{site.location}</p>
+                    <h3 className="font-bold text-cat-dark">{site.name}</h3>
+                    <p className="text-sm text-gray-700">{site.location}</p>
                     <span className={`inline-block mt-2 px-2 py-1 text-xs rounded-full ${getStatusClass(site.status)}`}>
                       {site.status}
                     </span>
@@ -90,7 +90,7 @@ export default function Sites() {
 
       {/* Sites List */}
       <div className="cat-card">
-        <h2 className="text-xl font-bold mb-4">Site Details</h2>
+        <h2 className="text-xl font-bold mb-4 text-cat-dark">Site Details</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
