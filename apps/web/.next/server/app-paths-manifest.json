@@ -1,0 +1,9 @@
+{
+  "/rentals/page": "app/rentals/page.js",
+  "/equipment/page": "app/equipment/page.js",
+  "/maintenance/page": "app/maintenance/page.js",
+  "/forecasting/page": "app/forecasting/page.js",
+  "/alerts/page": "app/alerts/page.js",
+  "/sites/page": "app/sites/page.js",
+  "/settings/page": "app/settings/page.js"
+}

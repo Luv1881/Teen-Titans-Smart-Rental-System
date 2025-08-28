@@ -1,0 +1,18 @@
+{
+  "name": "cat-smart-rental-tracker",
+  "version": "1.0.0",
+  "description": "CAT Smart Rental Tracker - Equipment Management System",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix apps/server\" \"npm run dev --prefix apps/web\"",
+    "build": "npm run build --prefix apps/server && npm run build --prefix apps/web",
+    "start": "npm run start --prefix apps/server & npm run start --prefix apps/web",
+    "test": "npm run test --prefix apps/server && npm run test --prefix apps/web"
+  },
+  "keywords": ["caterpillar", "equipment", "rental", "tracker"],
+  "author": "CAT Equipment Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
