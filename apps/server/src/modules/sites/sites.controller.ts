@@ -7,9 +7,12 @@ export class SiteController {
   // Get all sites
   static async getAll(req: Request, res: Response) {
     try {
-      const sites = await prisma.site.findMany();
+      const sites = await prisma.sites.findMany({
+        include: { clients: true, rentals: true }
+      });
       return res.status(200).json(sites);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to fetch sites' });
     }
   }
@@ -18,16 +21,16 @@ export class SiteController {
   static async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const site = await prisma.site.findUnique({
-        where: { site_id: Number(id) }
+      const site = await prisma.sites.findUnique({
+        where: { site_id: Number(id) },
+        include: { clients: true, rentals: true }
       });
-      
-      if (!site) {
-        return res.status(404).json({ error: 'Site not found' });
-      }
-      
+
+      if (!site) return res.status(404).json({ error: 'Site not found' });
+
       return res.status(200).json(site);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to fetch site' });
     }
   }
@@ -35,20 +38,22 @@ export class SiteController {
   // Create new site
   static async create(req: Request, res: Response) {
     try {
-      const { site_code, site_name, location, latitude, longitude } = req.body;
-      
-      const site = await prisma.site.create({
+      const { site_name, location, client_id, latitude, longitude, geofence_radius_meters } = req.body;
+
+      const site = await prisma.sites.create({
         data: {
-          site_code,
           site_name,
           location,
+          client_id,
           latitude,
-          longitude
+          longitude,
+          geofence_radius_meters
         }
       });
-      
+
       return res.status(201).json(site);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to create site' });
     }
   }
@@ -57,21 +62,23 @@ export class SiteController {
   static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { site_code, site_name, location, latitude, longitude } = req.body;
-      
-      const site = await prisma.site.update({
+      const { site_name, location, client_id, latitude, longitude, geofence_radius_meters } = req.body;
+
+      const site = await prisma.sites.update({
         where: { site_id: Number(id) },
         data: {
-          site_code,
           site_name,
           location,
+          client_id,
           latitude,
-          longitude
+          longitude,
+          geofence_radius_meters
         }
       });
-      
+
       return res.status(200).json(site);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to update site' });
     }
   }

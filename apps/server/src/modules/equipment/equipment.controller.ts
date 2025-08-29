@@ -9,11 +9,12 @@ export class EquipmentController {
     try {
       const equipment = await prisma.equipment.findMany({
         include: {
-          site: true
+          rentals: true,      // include rental records
         }
       });
       return res.status(200).json(equipment);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to fetch equipment' });
     }
   }
@@ -25,16 +26,17 @@ export class EquipmentController {
       const equipment = await prisma.equipment.findUnique({
         where: { equipment_id: Number(id) },
         include: {
-          site: true
+          rentals: true,
         }
       });
-      
+
       if (!equipment) {
         return res.status(404).json({ error: 'Equipment not found' });
       }
-      
+
       return res.status(200).json(equipment);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to fetch equipment' });
     }
   }
@@ -42,19 +44,19 @@ export class EquipmentController {
   // Create new equipment
   static async create(req: Request, res: Response) {
     try {
-      const { equipment_code, type, site_id, status } = req.body;
-      
+      const { equipment_code, type, status } = req.body;
+
       const equipment = await prisma.equipment.create({
         data: {
           equipment_code,
           type,
-          site_id,
           status
         }
       });
-      
+
       return res.status(201).json(equipment);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to create equipment' });
     }
   }
@@ -63,20 +65,20 @@ export class EquipmentController {
   static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { equipment_code, type, site_id, status } = req.body;
-      
+      const { equipment_code, type, status } = req.body;
+
       const equipment = await prisma.equipment.update({
         where: { equipment_id: Number(id) },
         data: {
           equipment_code,
           type,
-          site_id,
           status
         }
       });
-      
+
       return res.status(200).json(equipment);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: 'Failed to update equipment' });
     }
   }

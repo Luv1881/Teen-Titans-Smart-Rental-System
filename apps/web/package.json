@@ -18,6 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
+    "cat-smart-rental-tracker": "file:../..",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.542.0",
     "next": "14.0.0",
